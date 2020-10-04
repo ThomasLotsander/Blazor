@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor_Sylt", "Blazor_Sylt\Blazor_Sylt.csproj", "{DEF833E3-6D06-4987-9223-B7DC3A713958}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor_Sylt.Tests", "Blazor_Sylt.Tests\Blazor_Sylt.Tests.csproj", "{80E61EEE-800B-414B-BE4C-D51350135781}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor_Sylt.Tests", "Blazor_Sylt.Tests\Blazor_Sylt.Tests.csproj", "{80E61EEE-800B-414B-BE4C-D51350135781}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{75863BB4-8B2C-4AC3-B0A8-FF4A259D53F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{80E61EEE-800B-414B-BE4C-D51350135781}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80E61EEE-800B-414B-BE4C-D51350135781}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80E61EEE-800B-414B-BE4C-D51350135781}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75863BB4-8B2C-4AC3-B0A8-FF4A259D53F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75863BB4-8B2C-4AC3-B0A8-FF4A259D53F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75863BB4-8B2C-4AC3-B0A8-FF4A259D53F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75863BB4-8B2C-4AC3-B0A8-FF4A259D53F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

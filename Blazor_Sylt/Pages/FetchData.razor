@@ -3,8 +3,11 @@
 @using System.Threading
 @using Blazor_Sylt.Business.Models
 @using Blazor_Sylt.Data
+@using System.Security.Permissions
+@using DataAccess.Models
 @inject WeatherForecastService ForecastService
 @inject Game GameService
+@inject JokesAccess JokesAccess
 
 <h1>Weather forecast</h1>
 
@@ -40,15 +43,34 @@ else
 
 }
 
+<label for="pk-filter">Tillåt alla skämt?</label>
+<input id="pk-filter" type="checkbox" @bind-value="Pk_filter"/> 
+<button @onclick="@GetJoke">Ge mig en ordvits!</button>
+
+
+@if (joke != null)
+{
+    <p>- @joke.Premiss</p>
+    <p>- @joke.PunchLine</p>
+    
+
+}
+
 
 
 @code {
     private WeatherForecast[] forecasts;
+    private Joke joke;
+    private bool Pk_filter;
 
     protected override async Task OnInitializedAsync()
     {
         forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
-       
     }
-    
+
+    private async Task GetJoke()
+    {
+        joke = await JokesAccess.GetRandomJoke(Pk_filter);
+    }
+
 }

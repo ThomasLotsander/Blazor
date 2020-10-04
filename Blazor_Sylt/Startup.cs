@@ -11,6 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Blazor_Sylt.Data;
+using DataAccess.DataAccessLayer;
+using DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Blazor_Sylt
 {
@@ -31,6 +35,11 @@ namespace Blazor_Sylt
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<Game>();
+            services.AddTransient<JokesAccess>();
+
+            services.AddDbContext<DataBaseContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
