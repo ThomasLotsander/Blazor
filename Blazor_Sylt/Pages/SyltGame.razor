@@ -1,0 +1,82 @@
+﻿@page "/Sylt"
+@using Blazor_Sylt.Business.Models
+@using Blazor_Sylt.Models
+
+@inject Game GameService
+<div class="container">
+<h3>SyltGame</h3>
+
+<EditForm Model="@_playerModel" OnValidSubmit="@AddPlayer">
+    <InputText @bind-Value="_playerModel.Name" selected />
+    <button type="submit">Skapa</button>
+</EditForm>
+
+@if (GameService.Players.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Namn</th>
+                <th>Poäng</th>
+                <th>Antal Sylt</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in GameService.Players)
+            {
+                <tr @onclick="(() => GameService.CurrentPlayer = player)">
+                    <td>@player.Name</td>
+                    <td>
+                        @player.TotalPoint
+                        <div class="progress">
+                        <div class="progress-bar progress-bar-success" role="progressbar"
+                             aria-valuemin="0" aria-valuemax="100" style="width:@(player.TotalPoint)%">
+                          
+                        </div>
+                    </div>
+                </td>
+                <td>@player.NumberOfSylt</td>
+                <td></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+}
+
+
+<button class="btn btn-primary" @onclick="@NewGame">Nytt spel</button>
+
+       
+
+@if (GameService.CurrentPlayer != null)
+{
+    <PlayerData Player="@GameService.CurrentPlayer"></PlayerData>
+}
+
+</div>
+
+
+
+
+
+@code {
+    private PlayerModel _playerModel = new PlayerModel();
+   
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private void AddPlayer()
+    {
+        GameService.Players.Add(new Player(_playerModel.Name));
+        _playerModel = new PlayerModel();
+    }
+
+    private void NewGame()
+    {
+        GameService.Players = new List<Player>();
+        GameService.CurrentPlayer = null;
+    }
+}

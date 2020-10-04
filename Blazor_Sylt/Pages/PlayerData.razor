@@ -1,0 +1,155 @@
+﻿@using System.Security.Cryptography.X509Certificates
+@using Blazor_Sylt.Business.Helper
+@using Blazor_Sylt.Business.Models
+@using Blazor_Sylt.Business.Helper
+@using Blazor_Sylt.Service.SyltServices
+@inject Game GameService
+
+
+<hr />
+
+<h2>Nuvarande spelar: @Player.Name</h2>
+<h4>Poäng denna runda... @_pointsThisRound</h4>
+@if (Player.Dices == null)
+{
+    <p><em>Loading...</em></p>
+    <button class="btn btn-primary" @onclick="@(() => GetDiceRoll())">Slå tärning</button>
+
+}
+else
+{
+    @if (_sylt)
+    {
+        <h3>Sylt!</h3>
+        <button class="btn btn-primary" @onclick="@(() => GetDiceRoll(Player.Dices))">Slå tärning</button>
+        <button class="btn btn-primary" @onclick="SavePoints">Spara poäng och nästa spelare</button>
+    }
+    else
+    {
+        <button class="btn btn-primary" @onclick="@(() => GetDiceRoll(Player.Dices))">Slå tärning</button>
+        <button class="btn btn-primary" @onclick="SavePoints">Spara poäng och nästa spelare</button>
+    }
+
+    <div class="row">
+        <div class="col-4">
+            @foreach (var dice in Player.Dices.Where(x => x.Locked != true))
+            {
+
+                <p>
+                    Tärningsslag: @dice.Value
+                    @if (!dice.Locked)
+                    {
+                        <button class="btn btn-primary" @onclick="@(() => ToggleDiceLock(dice))"><span class="oi oi-lock-unlocked"></span></button>
+                    }
+                    else
+                    {
+                        <span class="btn btn-danger oi oi-lock-locked" @onclick="@(() => ToggleDiceLock(dice))"></span>
+                    }
+                </p>
+                <hr />
+            }
+        </div>
+        <div class="col-4"> </div>
+        <div class="col-4">
+
+            @foreach (var dice in Player.Dices.Where(x => x.Locked == true))
+            {
+                <p>
+                    Tärningsslag: @dice.Value
+                    @if (!dice.Locked)
+                    {
+                        <button class="btn btn-primary" @onclick="@(() => ToggleDiceLock(dice))"><span class="oi oi-lock-unlocked"></span></button>
+                    }
+                    else
+                    {
+                        <span class="btn btn-danger oi oi-lock-locked" @onclick="@(() => ToggleDiceLock(dice))"></span>
+                    }
+                </p>
+                <hr />
+            }
+        </div>
+    </div>
+}
+
+
+
+@code {
+
+    [Parameter]
+    public Player Player { get; set; }
+
+    DiceHelper diceHelper = new DiceHelper();
+    DiceLogic diceLogic = new DiceLogic();
+
+    private double _pointsThisRound;
+
+    private bool _sylt;
+    private List<Dice> _savedDices = new List<Dice>();
+
+    private void GetDiceRoll(List<Dice> dicesInput = null)
+    {
+        if (_savedDices.Count != 0)
+        {
+            _pointsThisRound += diceHelper.GetTotalScore(_savedDices);
+        }
+
+
+        Player.Dices = GameService.RollDices(dicesInput);
+
+        if (Player.Dices.All(x => x.Locked == false))
+        {
+
+            if (diceLogic.CheckIfNothing(Player.Dices))
+            {
+                _pointsThisRound += 5;
+            }
+            if (diceLogic.CheckIfThreePair(Player.Dices))
+            {
+                _pointsThisRound += 15;
+            }
+            if (diceLogic.CheckIfStraight(Player.Dices))
+            {
+                _pointsThisRound += 20;
+            }
+        }
+
+        Player.IsSylt = diceLogic.CheckIfSylt(Player.Dices);
+
+        if (Player.Dices.Any(x => x.Locked != true))
+        {
+            _sylt = diceLogic.CheckIfSylt(Player.Dices.Where(x => x.Locked != true).ToList());
+        }
+
+        if (_sylt)
+        {
+            _pointsThisRound = 0;
+            Player.NumberOfSylt++;
+            if (Player.NumberOfSylt == 3)
+            {
+                Player.TotalPoint -= 5;
+                Player.NumberOfSylt = 0;
+            }
+        }
+        _savedDices = new List<Dice>();
+    }
+
+    private void ToggleDiceLock(Dice dice)
+    {
+
+        dice.Locked = !dice.Locked;
+        if (dice.Locked)
+        {
+            _savedDices.Add(dice);
+        }
+        else
+        {
+            _savedDices.Remove(dice);
+        }
+
+    }
+
+    private void SavePoints()
+    {
+        Player.TotalPoint += _pointsThisRound;
+    }
+}
